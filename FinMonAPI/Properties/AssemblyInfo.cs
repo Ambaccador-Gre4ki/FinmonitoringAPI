@@ -5,11 +5,7 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные с этой сборкой.
-[assembly: AssemblyTitle("FinMonAPI")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FinMonAPI")]
 [assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -29,5 +25,3 @@ using System.Runtime.InteropServices;
 //      Номер сборки
 //      Номер редакции
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
