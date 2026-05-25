@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37314.3 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinMonAPI", "FinMonAPI.csproj", "{C09C1704-4412-4518-94AB-A9542ED185D6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C09C1704-4412-4518-94AB-A9542ED185D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C09C1704-4412-4518-94AB-A9542ED185D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C09C1704-4412-4518-94AB-A9542ED185D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C09C1704-4412-4518-94AB-A9542ED185D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74F9D1C1-DF3F-42F0-A138-B372E25AEF34}
+	EndGlobalSection
+EndGlobal
