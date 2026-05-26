@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
+﻿using FinMonAPI.Models;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
-using FinMonAPI.Models;
 
 namespace FinMonAPI
 {

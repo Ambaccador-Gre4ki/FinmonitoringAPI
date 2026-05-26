@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
-
-namespace FinMonAPI
+﻿namespace FinMonAPI
 {
     public class ClientManager : IDisposable
     {
