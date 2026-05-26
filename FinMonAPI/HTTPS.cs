@@ -7,8 +7,7 @@ namespace FinMonAPI
     public class ClientManager : IDisposable
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://fedsfm.ru";// Проверь адрес для создания соединения!
-
+        private const string BaseUrl = "https://portal.fedsfm.ru:8081/Services/fedsfm-service/";
         /// <summary>
         /// Предоставляет доступ к настроенному HttpClient для всего приложения
         /// </summary>

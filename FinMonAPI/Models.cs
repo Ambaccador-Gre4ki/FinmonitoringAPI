@@ -22,7 +22,7 @@ namespace FinMonAPI.Models
         public AuthValue? Value { get; set; }
 
         [JsonPropertyName("errors")]
-        public string? Errors { get; set; }
+        public System.Text.Json.JsonElement Errors { get; set; }
     }
 
     public class AuthValue

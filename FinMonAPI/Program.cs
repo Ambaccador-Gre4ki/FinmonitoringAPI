@@ -7,16 +7,16 @@ namespace FinMonAPI
 {
     internal class Program
     {
-        private const string BaseUrl = "https://fedsfm.ru";
+        private const string BaseUrl = "https://portal.fedsfm.ru:8081/Services/fedsfm-service/";
 
         static async Task Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             // НАСТРОЙКИ ДЛЯ ПОДКЛЮЧЕНИЯ
-            string thumbprint = "ВАШ_ОТПЕЧАТОК_СЕРТИФИКАТА_КРИПТО_ПРО";
-            string login = "ваш_логин_лк";
-            string password = "ваш_пароль_лк";
+            string thumbprint = "********";
+            string login = "login";
+            string password = "password";
 
             try
             {
@@ -29,8 +29,10 @@ namespace FinMonAPI
                 handler.ClientCertificates.Add(cert);
 
                 // Для тестового контура (при проблемах со шлюзовыми SSL-сертификатами):
-                // handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                //ОТКЛЮЧАЕМ РЕЖИМЫ, КОТОРЫЕ МОГУТ БЛОКИРОВАТЬ ГОСТ (в некоторых сборках Windows это необходимо)
+                handler.CheckCertificateRevocationList = false; // Отключаем онлайн-проверку отзыва (CRL)
+                //
                 using var httpClient = new HttpClient(handler);
                 httpClient.BaseAddress = new Uri(BaseUrl);
                 httpClient.Timeout = TimeSpan.FromMinutes(10); // Защита от таймаутов на больших файлах

@@ -11,7 +11,7 @@ namespace FinMonAPI
     public class AuthService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://portal.fedsfm.ru";
+        private const string BaseUrl = "https://portal.fedsfm.ru:8081/Services/fedsfm-service/";
 
         // Передаем настроенный HttpClient с сертификатом через конструктор
         public AuthService(HttpClient httpClient)
@@ -50,6 +50,8 @@ namespace FinMonAPI
 
                 if (authResponse != null && authResponse.Success)
                 {
+                    string rawJson = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"\n[ОТЛАДКА] Ответ сервера: {rawJson}\n");
                     // Проверяем, что вложенный объект Value и токен существуют
                     if (authResponse.Value?.AccessToken != null)
                     {
@@ -59,8 +61,22 @@ namespace FinMonAPI
                 }
                 else
                 {
-                    // Если Success = false, выводим ошибки из ответа
-                    string errorMessage = authResponse?.Errors ?? "Неизвестная ошибка";
+                    string errorMessage;
+                    if (authResponse.Errors.ValueKind == System.Text.Json.JsonValueKind.Array)
+                    {
+                        // Если это массив ошибок, собираем их через запятую
+                        var errorList = new List<string>();
+                        foreach (var err in authResponse.Errors.EnumerateArray())
+                        {
+                            errorList.Add(err.ToString());
+                        }
+                        errorMessage = string.Join("; ", errorList);
+                    }
+                    else
+                    {
+                        // Если это простая строка или объект, берем сырой текст
+                        errorMessage = authResponse.Errors.ToString();
+                    }
                     throw new Exception($"Ошибка авторизации Росфинмониторинга: {errorMessage}");
                 }
             }
@@ -85,19 +101,19 @@ namespace FinMonAPI
 
         private class AuthResponse
         {
-            [JsonPropertyName("success")]
+            //[JsonPropertyName("success")]
             public bool Success { get; set; }
 
-            [JsonPropertyName("value")]
+            //[JsonPropertyName("value")]
             public AuthValue? Value { get; set; }
 
-            [JsonPropertyName("errors")]
-            public string? Errors { get; set; }
+            //[JsonPropertyName("errors")]
+            public System.Text.Json.JsonElement Errors { get; set; }
         }
 
         private class AuthValue
         {
-            [JsonPropertyName("access_token")]
+            [JsonPropertyName("accessToken")]
             public string? AccessToken { get; set; }
 
             [JsonPropertyName("refreshToken")]
