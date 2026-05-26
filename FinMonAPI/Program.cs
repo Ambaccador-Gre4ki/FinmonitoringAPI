@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Serilog;
+using Microsoft.Extensions.Configuration;
 
 namespace FinMonAPI
 {
@@ -24,10 +25,22 @@ namespace FinMonAPI
 
             Log.Information("Приложение FinMonAPI успешно запущено.");
 
-            // НАСТРОЙКИ ДЛЯ ПОДКЛЮЧЕНИЯ
-            string thumbprint = "********";
-            string login = "login";
-            string password = "password";
+            Log.Debug("/// Загрузка конфигурации из appsettings.json ///");
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            // Читаем переменные из секции "RosFinMon"
+            string? thumbprint = configuration["RosFinMon:Thumbprint"];
+            string? login = configuration["RosFinMon:Login"];
+            string? password = configuration["RosFinMon:Password"];
+
+            // Валидация: проверяем, что в конфигурации заполнены все поля
+            if (string.IsNullOrWhiteSpace(thumbprint) || string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
+            {
+                throw new Exception("Критическая ошибка конфигурации: В appsettings.json не заполнены Thumbprint, Login или Password.");
+            }
 
             try
             {
