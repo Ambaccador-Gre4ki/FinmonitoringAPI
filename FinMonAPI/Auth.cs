@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 
 namespace FinMonAPI
@@ -9,12 +11,15 @@ namespace FinMonAPI
     public class AuthService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://portal.fedsfm.ru:8081/Services/fedsfm-service";
+        private const string BaseUrl = "https://portal.fedsfm.ru";
 
         // Передаем настроенный HttpClient с сертификатом через конструктор
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            if (_httpClient.BaseAddress == null) {
+                _httpClient.BaseAddress = new Uri(BaseUrl);
+            }
         }
 
         /// <summary>
@@ -31,14 +36,17 @@ namespace FinMonAPI
 
             try
             {
+                var jsonOptions = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true                
+                };
                 // Отправляем POST-запрос с ContentType: application/json
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync(BaseUrl, requestBody);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync("test-contur/authenticate", requestBody);
 
                 // Вызовет исключение, если HTTP-статус не 2xx
                 response.EnsureSuccessStatusCode();
 
                 // Читаем и десериализуем ответ
-                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>(jsonOptions);
 
                 if (authResponse != null && authResponse.Success)
                 {
@@ -68,30 +76,28 @@ namespace FinMonAPI
         // Модель запроса
         private class AuthRequest
         {
-            [JsonPropertyName("userName")] // В JSON со строчной
+            [JsonPropertyName("userName")]
             public string UserName { get; set; } = string.Empty;
 
-            [JsonPropertyName("Password")] // В JSON с заглавной!
+            [JsonPropertyName("Password")]
             public string Password { get; set; } = string.Empty;
         }
 
-        // Модель ответа
         private class AuthResponse
         {
-            [JsonPropertyName("Success")]
+            [JsonPropertyName("success")]
             public bool Success { get; set; }
 
-            [JsonPropertyName("Value")]
+            [JsonPropertyName("value")]
             public AuthValue? Value { get; set; }
 
-            [JsonPropertyName("Errors")]
+            [JsonPropertyName("errors")]
             public string? Errors { get; set; }
         }
 
-        // Блок служебных полей Value
         private class AuthValue
         {
-            [JsonPropertyName("access_token")] // В JSON через подчеркивание
+            [JsonPropertyName("access_token")]
             public string? AccessToken { get; set; }
 
             [JsonPropertyName("refreshToken")]
@@ -99,5 +105,4 @@ namespace FinMonAPI
         }
         #endregion
     }
-
 }
