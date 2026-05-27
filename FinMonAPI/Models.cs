@@ -2,7 +2,7 @@
 
 namespace FinMonAPI.Models
 {
-    // --- Модели Авторизации ---
+    // --- Модели Авторизации, попробовать закомментировать ---
     public class AuthRequest
     {
         [JsonPropertyName("userName")]

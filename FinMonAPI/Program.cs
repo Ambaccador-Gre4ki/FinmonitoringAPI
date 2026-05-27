@@ -11,18 +11,7 @@ namespace FinMonAPI
         static async Task Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug() // Записываем Debug, Information, Warning, Error
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
-                .WriteTo.File(
-                    path: Path.Combine(AppContext.BaseDirectory, "logs", "log-.txt"),
-                    rollingInterval: RollingInterval.Day, // Автоматический новый файл каждый день
-                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                .CreateLogger();
-
-            Log.Information("Приложение FinMonAPI успешно запущено.");
-
-            Log.Debug("/// Загрузка конфигурации из appsettings.json ///");
+           
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -32,7 +21,32 @@ namespace FinMonAPI
             string? thumbprint = configuration["RosFinMon:Thumbprint"];
             string? login = configuration["RosFinMon:Login"];
             string? password = configuration["RosFinMon:Password"];
+            string downloadFolder = configuration["RosFinMon:DownloadFolder"] ?? AppContext.BaseDirectory;
+            string logsFolder = configuration["RosFinMon:LogsFolder"] ?? Path.Combine(downloadFolder, "logs");
 
+            try
+            {
+                Directory.CreateDirectory(logsFolder);
+                Directory.CreateDirectory(downloadFolder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Критическая ошибка: Нет доступа к сетевой папке. {ex.Message}");
+                return;
+            }
+            
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug() // Записываем Debug, Information, Warning, Error
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File(
+                    path: Path.Combine(logsFolder, "log-.txt"),
+                    rollingInterval: RollingInterval.Day, // Автоматический новый файл каждый день
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .CreateLogger();
+
+            Log.Information("Приложение FinMonAPI успешно запущено.");
+
+            Log.Debug("/// Загрузка конфигурации из appsettings.json ///");
             // Валидация: проверяем, что в конфигурации заполнены все поля
             if (string.IsNullOrWhiteSpace(thumbprint) || string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
             {
@@ -82,7 +96,7 @@ namespace FinMonAPI
                 var te2Catalog = await catalogService.GetTe2CatalogAsync();
                 if (te2Catalog != null && te2Catalog.IsActive)
                 {
-                    string path = Path.Combine(AppContext.BaseDirectory, "current_te2.zip");
+                    string path = Path.Combine(downloadFolder, "current_te2.zip");
                     Log.Information("Найден активный перечень ТЭ от {Date}. Скачивание файла...", te2Catalog.Date);
                     Console.WriteLine($"-> Найден активный перечень ТЭ от {te2Catalog.Date}. Скачивание...");
                     await catalogService.DownloadTe2FileAsync(te2Catalog.IdXml, path);
@@ -98,7 +112,7 @@ namespace FinMonAPI
                 //var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
                 //if (unRusCatalog != null && unRusCatalog.IsActive)
                 //{
-                //    string path = Path.Combine(AppContext.BaseDirectory, "current_un_rus.xml");
+                //    string path = Path.Combine(downloadFolder, "current_un_rus.xml");
                 //    Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
                 //    Console.WriteLine($"-> Найден активный перечень ООН (RU) от {unRusCatalog.Date}. Скачивание...");
                 //    await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
