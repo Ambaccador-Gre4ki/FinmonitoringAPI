@@ -47,8 +47,10 @@ namespace FinMonAPI
 
                 if (authResponse != null && authResponse.Success)
                 {
-                    string rawJson = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"\n[ОТЛАДКА] Ответ сервера: {rawJson}\n");
+                    //Используйте код ниже для отладки
+                    //string rawJson = await response.Content.ReadAsStringAsync();
+                    //Console.WriteLine($"\n[ОТЛАДКА] Ответ сервера: {rawJson}\n");
+
                     // Проверяем, что вложенный объект Value и токен существуют
                     if (authResponse.Value?.AccessToken != null)
                     {

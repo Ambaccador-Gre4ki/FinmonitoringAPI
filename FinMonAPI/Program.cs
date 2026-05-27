@@ -11,7 +11,8 @@ namespace FinMonAPI
         static async Task Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-           
+
+            // Зарузка настроек из appsettings.json           
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -34,7 +35,8 @@ namespace FinMonAPI
                 Console.WriteLine($"Критическая ошибка: Нет доступа к сетевой папке. {ex.Message}");
                 return;
             }
-            
+
+            // Создание логгера
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug() // Записываем Debug, Information, Warning, Error
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
@@ -56,51 +58,43 @@ namespace FinMonAPI
             try
             {
                 Log.Information("=== Поиск сертификата ===");
-                Console.WriteLine("Шаг 1: Поиск ГОСТ-сертификата...");
                 var cert = CertificateProvider.GetGostCertificate(thumbprint);
                 Console.WriteLine($"Сертификат найден: {cert.Subject}\n");
                 Log.Information("Сертификат успешно подключен: {Subject}", cert.Subject);
 
                 Log.Information("=== Инициализация соединения ===");
-                Console.WriteLine("Шаг 2: Инициализация HTTPS-соединения...");
                 var handler = new HttpClientHandler();
                 handler.ClientCertificates.Add(cert);
 
                 // Для тестового контура (при проблемах со шлюзовыми SSL-сертификатами):
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                //ОТКЛЮЧАЕМ РЕЖИМЫ, КОТОРЫЕ МОГУТ БЛОКИРОВАТЬ ГОСТ (в некоторых сборках Windows это необходимо)
-                handler.CheckCertificateRevocationList = false; // Отключаем онлайн-проверку отзыва (CRL)
-                //
+                //handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+                //Отключаем онлайн-проверку отзыва (CRL), это может блокировать ГОСТ (в некоторых сборках Windows)
+                //handler.CheckCertificateRevocationList = false;
+
                 using var httpClient = new HttpClient(handler);
                 httpClient.BaseAddress = new Uri(BaseUrl);
                 httpClient.Timeout = TimeSpan.FromMinutes(10); // Защита от таймаутов на больших файлах
 
-                // Авторизация и получение JWT-токена
-                Log.Information("=== Запрос токена ===");
-                Console.WriteLine("Шаг 3: Запрос JWT-токена сессии...");
+                Log.Information("=== Запрос JWT-токена ===");
                 var authService = new AuthService(httpClient);
                 string accessToken = await authService.AuthenticateAsync(login, password);
-                Console.WriteLine("Токен успешно получен!");
                 Log.Information("Токен получен");
 
                 // Ставим Bearer-токен в заголовки для всех последующих запросов
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                // Работа с каталогами справочников
-                Log.Information("=== Скачивание справочников ===");
+                Log.Information("=== Скачивание актуальных справочников ===");
                 var catalogService = new CatalogService(httpClient);
-                Console.WriteLine("\nШаг 4: Скачивание актуальных перечней...");
 
-                // --- 4.1 Скачивание Перечня Террористов (TE2) ---
+                // Скачивание Перечня Террористов
                 Log.Debug("/// Запрос актуального списка экстремистов ///");
                 var te2Catalog = await catalogService.GetTe2CatalogAsync();
                 if (te2Catalog != null && te2Catalog.IsActive)
                 {
                     string path = Path.Combine(downloadFolder, "current_te2.zip");
                     Log.Information("Найден активный перечень ТЭ от {Date}. Скачивание файла...", te2Catalog.Date);
-                    Console.WriteLine($"-> Найден активный перечень ТЭ от {te2Catalog.Date}. Скачивание...");
                     await catalogService.DownloadTe2FileAsync(te2Catalog.IdXml, path);
-                    Console.WriteLine($"   Файл ТЭ сохранен: {path}");
                     Log.Information("Файл ТЭ успешно сохранен: {Path}", path);
                 }
                 else
@@ -114,17 +108,13 @@ namespace FinMonAPI
                 //{
                 //    string path = Path.Combine(downloadFolder, "current_un_rus.xml");
                 //    Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
-                //    Console.WriteLine($"-> Найден активный перечень ООН (RU) от {unRusCatalog.Date}. Скачивание...");
                 //    await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
-                //    Console.WriteLine($"   Файл ООН (RU) сохранен: {path}");
                 //    Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
                 //}
                 //else
                 //{
                 //    Log.Warning("!!! Актуальный перечень ООН (RU) не найден или неактивен !!!");
                 //}
-
-                Console.WriteLine("\nВсе операции успешно завершены!");
                 Log.Information("Все запланированные операции успешно завершены.");
             }
             catch (Exception ex)
