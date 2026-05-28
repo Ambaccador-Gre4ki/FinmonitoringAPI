@@ -63,19 +63,20 @@ namespace FinMonAPI
                 Console.WriteLine($"Сертификат найден: {cert.Subject}\n");
                 Log.Information("Сертификат успешно подключен: {Subject}", cert.Subject);
 
-                Log.Information("=== Инициализация соединения ===");
-                var handler = new HttpClientHandler();
-                handler.ClientCertificates.Add(cert);
+                Log.Information("=== Инициализация соединения с логгированием конвертов ===");
+                // 1. Настраиваем базовый шлюз КриптоПро
+                var baseHandler = new HttpClientHandler();
+                baseHandler.ClientCertificates.Add(cert);
+                baseHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                baseHandler.CheckCertificateRevocationList = false;
 
-                // Для тестового контура (при проблемах со шлюзовыми SSL-сертификатами):
-                //handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                // 2. Оборачиваем его в наш новый LoggingHandler для автоматической выгрузки конвертов
+                var loggingHandler = new LoggingHandler(baseHandler);
 
-                //Отключаем онлайн-проверку отзыва (CRL), это может блокировать ГОСТ (в некоторых сборках Windows)
-                //handler.CheckCertificateRevocationList = false;
-
-                using var httpClient = new HttpClient(handler);
+                // 3. Создаем HttpClient, передавая loggingHandler
+                using var httpClient = new HttpClient(loggingHandler);
                 httpClient.BaseAddress = new Uri(BaseUrl);
-                httpClient.Timeout = TimeSpan.FromMinutes(10); // Защита от таймаутов на больших файлах
+                httpClient.Timeout = TimeSpan.FromMinutes(10);// Защита от таймаутов на больших файлах
 
                 Log.Information("=== Запрос JWT-токена ===");
                 var authService = new AuthService(httpClient);
