@@ -102,20 +102,37 @@ namespace FinMonAPI
                 {
                     Log.Warning("!!! Актуальный перечень ТЭ не найден или неактивен !!!");
                 }
-                //// Скачивание Русской версии Перечня ООН
-                //Log.Debug("/// Запрос актуального каталога ООН (RU) ///");
-                //var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
-                //if (unRusCatalog != null && unRusCatalog.IsActive)
-                //{
-                //    string path = Path.Combine(downloadFolder, "current_un_rus.xml");
-                //    Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
-                //    await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
-                //    Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
-                //}
-                //else
-                //{
-                //    Log.Warning("!!! Актуальный перечень ООН (RU) не найден или неактивен !!!");
-                //}
+
+                // Скачивание русской версии Перечня ООН
+                Log.Debug("/// Запрос актуального каталога ООН (RU) ///");
+                var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
+                if (unRusCatalog != null && unRusCatalog.IsActive)
+                {
+                    string path = Path.Combine(downloadFolder, "current_un_rus.xml");
+                    Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
+                    await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
+                    Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
+                }
+                else
+                {
+                    Log.Warning("!!! Актуальный перечень ООН (RU) не найден или неактивен !!!");
+                }
+
+                // Скачивание английской версии Перечня ООН
+                Log.Debug("/// Запрос актуального каталога ООН (EN) ///");
+                var unEnCatalog = await catalogService.GetUnCatalogAsync();
+                if (unEnCatalog != null && unEnCatalog.IsActive)
+                {
+                    string path = Path.Combine(downloadFolder, "current_un.xml");
+                    Log.Information("Найден активный перечень ООН (EN) от {Date}. Скачивание файла...", unEnCatalog.Date);
+                    await catalogService.DownloadUnFileAsync(unEnCatalog.IdXml, path);
+                    Log.Information("Файл ООН (EN) успешно сохранен: {Path}", path);
+                }
+                else
+                {
+                    Log.Warning("!!! Актуальный перечень ООН (EN) не найден или неактивен !!!");
+                }
+
                 Log.Information("Все запланированные операции успешно завершены.");
             }
             catch (Exception ex)

@@ -37,37 +37,37 @@ namespace FinMonAPI
             await SaveStreamToFileAsync(response, destinationPath);
         }
 
-        ///// <summary>
-        ///// Получение информации о каталоге ООН (Английский)
-        ///// </summary>
-        //public async Task<UnCatalogResponse?> GetUnCatalogAsync()
-        //{
-        //    var response = await _httpClient.PostAsync("test-contur/suspect-catalogs/current-un-catalog", null);
-        //    response.EnsureSuccessStatusCode();
-        //    return await response.Content.ReadFromJsonAsync<UnCatalogResponse>(_jsonOptions);
-        //}
+        /// <summary>
+        /// Получение информации о каталоге ООН (Английский)
+        /// </summary>
+        public async Task<UnCatalogResponse?> GetUnCatalogAsync()
+        {
+            var response = await _httpClient.PostAsync("test-contur/suspect-catalogs/current-un-catalog", null);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UnCatalogResponse>(_jsonOptions);
+        }
 
-        ///// <summary>
-        ///// Получение информации о каталоге ООН (Русский)
-        ///// </summary>
-        //public async Task<UnCatalogResponse?> GetUnCatalogRusAsync()
-        //{
-        //    var response = await _httpClient.PostAsync("test-contur/suspect-catalogs/current-un-catalog-rus", null);
-        //    response.EnsureSuccessStatusCode();
-        //    return await response.Content.ReadFromJsonAsync<UnCatalogResponse>(_jsonOptions);
-        //}
+        /// <summary>
+        /// Получение информации о каталоге ООН (Русский)
+        /// </summary>
+        public async Task<UnCatalogResponse?> GetUnCatalogRusAsync()
+        {
+            var response = await _httpClient.PostAsync("test-contur/suspect-catalogs/current-un-catalog-rus", null);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UnCatalogResponse>(_jsonOptions);
+        }
 
-        ///// <summary>
-        ///// Скачивание XML-файла перечня ООН (idXml в форме)
-        ///// </summary>
-        //public async Task DownloadUnFileAsync(Guid idXml, string destinationPath)
-        //{
-        //    var formData = new FormUrlEncodedContent(new Dictionary<string, string> { { "idXml", idXml.ToString() } });
-        //    var response = await _httpClient.PostAsync("test-contur/suspect-catalogs/current-un-file", formData);
-        //    response.EnsureSuccessStatusCode();
+        /// <summary>
+        /// Скачивание XML-файла перечня ООН (idXml в форме)
+        /// </summary>
+        public async Task DownloadUnFileAsync(Guid idXml, string destinationPath)
+        {
+            var formData = new FormUrlEncodedContent(new Dictionary<string, string> { { "idXml", idXml.ToString() } });
+            var response = await _httpClient.PostAsync("test-contur/suspect-catalogs/current-un-file", formData);
+            response.EnsureSuccessStatusCode();
 
-        //    await SaveStreamToFileAsync(response, destinationPath);
-        //}
+            await SaveStreamToFileAsync(response, destinationPath);
+        }
 
         private static async Task SaveStreamToFileAsync(HttpResponseMessage response, string destinationPath)
         {
