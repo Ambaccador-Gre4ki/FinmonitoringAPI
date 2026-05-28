@@ -81,7 +81,6 @@ namespace FinMonAPI
             }
             catch (Exception ex)
             {
-                // Логируем или прокидываем ошибку дальше
                 throw new Exception($"Не удалось пройти авторизацию: {ex.Message}", ex);
             }
         }
@@ -100,13 +99,9 @@ namespace FinMonAPI
 
         private class AuthResponse
         {
-            //[JsonPropertyName("success")]
             public bool Success { get; set; }
-
-            //[JsonPropertyName("value")]
             public AuthValue? Value { get; set; }
 
-            //[JsonPropertyName("errors")]
             public System.Text.Json.JsonElement Errors { get; set; }
         }
 

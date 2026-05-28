@@ -16,7 +16,7 @@ namespace FinMonAPI
         }
 
         /// <summary>
-        /// 2.3.2.1 Получение информации о каталоге ТЭ
+        /// Получение информации о каталоге ТЭ
         /// </summary>
         public async Task<Te2CatalogResponse?> GetTe2CatalogAsync()
         {
@@ -26,7 +26,7 @@ namespace FinMonAPI
         }
 
         /// <summary>
-        /// 2.3.2.2 Скачивание zip-файла перечня ТЭ (id в форме)
+        /// Скачивание zip-файла перечня ТЭ (id в форме)
         /// </summary>
         public async Task DownloadTe2FileAsync(Guid catalogId, string destinationPath)
         {
@@ -38,7 +38,7 @@ namespace FinMonAPI
         }
 
         ///// <summary>
-        ///// 2.4.2.5 Получение информации о каталоге ООН (Английский)
+        ///// Получение информации о каталоге ООН (Английский)
         ///// </summary>
         //public async Task<UnCatalogResponse?> GetUnCatalogAsync()
         //{
@@ -48,7 +48,7 @@ namespace FinMonAPI
         //}
 
         ///// <summary>
-        ///// 2.4.9 Получение информации о каталоге ООН (Русский)
+        ///// Получение информации о каталоге ООН (Русский)
         ///// </summary>
         //public async Task<UnCatalogResponse?> GetUnCatalogRusAsync()
         //{
@@ -58,7 +58,7 @@ namespace FinMonAPI
         //}
 
         ///// <summary>
-        ///// 2.4.2.6 Скачивание XML-файла перечня ООН (idXml в форме)
+        ///// Скачивание XML-файла перечня ООН (idXml в форме)
         ///// </summary>
         //public async Task DownloadUnFileAsync(Guid idXml, string destinationPath)
         //{

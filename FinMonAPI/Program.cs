@@ -25,6 +25,7 @@ namespace FinMonAPI
             string downloadFolder = configuration["RosFinMon:DownloadFolder"] ?? AppContext.BaseDirectory;
             string logsFolder = configuration["RosFinMon:LogsFolder"] ?? Path.Combine(downloadFolder, "logs");
 
+            // Создаёт сетевую папку, если её ещё нет
             try
             {
                 Directory.CreateDirectory(logsFolder);
@@ -101,7 +102,7 @@ namespace FinMonAPI
                 {
                     Log.Warning("!!! Актуальный перечень ТЭ не найден или неактивен !!!");
                 }
-                //// --- 4.2 Скачивание Русской версии Перечня ООН ---
+                //// Скачивание Русской версии Перечня ООН
                 //Log.Debug("/// Запрос актуального каталога ООН (RU) ///");
                 //var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
                 //if (unRusCatalog != null && unRusCatalog.IsActive)
