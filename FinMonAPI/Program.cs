@@ -103,20 +103,6 @@ namespace FinMonAPI
                 {
                     Log.Warning("!!! Актуальный перечень ТЭ не найден или неактивен !!!");
                 }
-                //// Скачивание Русской версии Перечня ООН
-                //Log.Debug("/// Запрос актуального каталога ООН (RU) ///");
-                //var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
-                //if (unRusCatalog != null && unRusCatalog.IsActive)
-                //{
-                //    string path = Path.Combine(downloadFolder, "current_un_rus.xml");
-                //    Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
-                //    await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
-                //    Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
-                //}
-                //else
-                //{
-                //    Log.Warning("!!! Актуальный перечень ООН (RU) не найден или неактивен !!!");
-                //}
                 Log.Information("Все запланированные операции успешно завершены.");
             }
             catch (Exception ex)
