@@ -25,11 +25,6 @@
             var handler = new HttpClientHandler();
             handler.ClientCertificates.Add(gostCert);
 
-            // ВАЖНО ДЛЯ ТЕСТОВОГО КОНТУРА: Если на тестовом сервере Росфинмониторинга 
-            // используется самоподписанный SSL-сертификат, Schannel может выдать ошибку валидации.
-            // Если соединение будет обрываться, раскомментируйте строку ниже (ТОЛЬКО ДЛЯ ТЕСТОВ!):
-            // handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
             // Создаем единый клиент для работы и задаем базовый URL
             _httpClient = new HttpClient(handler)
             {

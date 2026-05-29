@@ -37,7 +37,7 @@ namespace FinMonAPI
                     PropertyNameCaseInsensitive = true                
                 };
                 // Отправляем POST-запрос с ContentType: application/json
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync("test-contur/authenticate", requestBody);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync("authenticate", requestBody);
 
                 // Вызовет исключение, если HTTP-статус не 2xx
                 response.EnsureSuccessStatusCode();
@@ -47,10 +47,6 @@ namespace FinMonAPI
 
                 if (authResponse != null && authResponse.Success)
                 {
-                    //Используйте код ниже для отладки
-                    //string rawJson = await response.Content.ReadAsStringAsync();
-                    //Console.WriteLine($"\n[ОТЛАДКА] Ответ сервера: {rawJson}\n");
-
                     // Проверяем, что вложенный объект Value и токен существуют
                     if (authResponse.Value?.AccessToken != null)
                     {
