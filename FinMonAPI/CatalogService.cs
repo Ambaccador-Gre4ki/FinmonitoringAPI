@@ -18,9 +18,9 @@ namespace FinMonAPI
         /// <summary>
         /// Получение информации о каталоге ТЭ
         /// </summary>
-        public async Task<Te2CatalogResponse?> GetTe2CatalogAsync()
+        public async Task<Te2CatalogResponse?> GetTe21CatalogAsync()
         {
-            var response = await _httpClient.PostAsync("suspect-catalogs/current-te2-catalog", null);
+            var response = await _httpClient.PostAsync("suspect-catalogs/current-te21-catalog", null);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Te2CatalogResponse>(_jsonOptions);
         }
@@ -28,10 +28,10 @@ namespace FinMonAPI
         /// <summary>
         /// Скачивание zip-файла перечня ТЭ (id в форме)
         /// </summary>
-        public async Task DownloadTe2FileAsync(Guid catalogId, string destinationPath)
+        public async Task DownloadTe21FileAsync(Guid catalogId, string destinationPath)
         {
             var formData = new FormUrlEncodedContent(new Dictionary<string, string> { { "id", catalogId.ToString() } });
-            var response = await _httpClient.PostAsync("suspect-catalogs/current-te2-file", formData);
+            var response = await _httpClient.PostAsync("suspect-catalogs/current-te21-file", formData);
             response.EnsureSuccessStatusCode();
 
             await SaveStreamToFileAsync(response, destinationPath);
@@ -62,7 +62,8 @@ namespace FinMonAPI
         /// </summary>
         public async Task DownloadUnFileAsync(Guid idXml, string destinationPath)
         {
-            var formData = new FormUrlEncodedContent(new Dictionary<string, string> { { "idXml", idXml.ToString() } });
+            using var formData = new MultipartFormDataContent();
+            formData.Add(new StringContent(idXml.ToString()), "id");
             var response = await _httpClient.PostAsync("suspect-catalogs/current-un-file", formData);
             response.EnsureSuccessStatusCode();
             await SaveStreamToFileAsync(response, destinationPath);

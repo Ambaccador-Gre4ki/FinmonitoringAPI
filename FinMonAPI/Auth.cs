@@ -89,7 +89,7 @@ namespace FinMonAPI
             [JsonPropertyName("userName")]
             public string UserName { get; set; } = string.Empty;
 
-            [JsonPropertyName("Password")]
+            [JsonPropertyName("password")]
             public string Password { get; set; } = string.Empty;
         }
 

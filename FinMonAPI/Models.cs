@@ -25,7 +25,7 @@ namespace FinMonAPI.Models
         public bool IsActive { get; set; }
 
         [JsonPropertyName("idRecStatus")]
-        public bool IdRecStatus { get; set; }
+        public bool? IdRecStatus { get; set; }
 
         [JsonPropertyName("idXml")]
         public Guid IdXml { get; set; }

@@ -67,12 +67,6 @@ namespace FinMonAPI
                 var handler = new HttpClientHandler();
                 handler.ClientCertificates.Add(cert);
 
-                // Для тестового контура (при проблемах со шлюзовыми SSL-сертификатами):
-                //handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
-                //Отключаем онлайн-проверку отзыва (CRL), это может блокировать ГОСТ (в некоторых сборках Windows)
-                //handler.CheckCertificateRevocationList = false;
-
                 using var httpClient = new HttpClient(handler);
                 httpClient.BaseAddress = new Uri(BaseUrl);
                 httpClient.Timeout = TimeSpan.FromMinutes(10); // Защита от таймаутов на больших файлах
@@ -80,7 +74,6 @@ namespace FinMonAPI
                 Log.Information("=== Запрос JWT-токена ===");
                 var authService = new AuthService(httpClient);
                 string accessToken = await authService.AuthenticateAsync(login, password);
-                Log.Information("Токен получен");
 
                 // Ставим Bearer-токен в заголовки для всех последующих запросов
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -90,49 +83,54 @@ namespace FinMonAPI
 
                 // Скачивание Перечня Террористов
                 Log.Debug("/// Запрос актуального списка экстремистов ///");
-                var te2Catalog = await catalogService.GetTe2CatalogAsync();
-                if (te2Catalog != null && te2Catalog.IsActive)
+                var te21Catalog = await catalogService.GetTe21CatalogAsync();
+                if (te21Catalog != null && te21Catalog.IsActive)
                 {
-                    string path = Path.Combine(downloadFolder, "current_te2.zip");
-                    Log.Information("Найден активный перечень ТЭ от {Date}. Скачивание файла...", te2Catalog.Date);
-                    await catalogService.DownloadTe2FileAsync(te2Catalog.IdXml, path);
+                    string path = Path.Combine(downloadFolder, "current_te21.zip");
+                    Log.Information("Найден активный перечень ТЭ от {Date}. Скачивание файла...", te21Catalog.Date);
+                    await catalogService.DownloadTe21FileAsync(te21Catalog.IdXml, path);
                     Log.Information("Файл ТЭ успешно сохранен: {Path}", path);
                 }
                 else
                 {
                     Log.Warning("!!! Актуальный перечень ТЭ не найден или неактивен !!!");
                 }
+                try
+                {
+                    // Скачивание русской версии Перечня ООН
+                    Log.Debug("/// Запрос актуального каталога ООН (RU) ///");
+                    var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
+                    if (unRusCatalog != null && unRusCatalog.IsActive)
+                    {
+                        string path = Path.Combine(downloadFolder, "current_un_rus.xml");
+                        Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
+                        await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
+                        Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
+                    }
+                    else
+                    {
+                        Log.Warning("!!! Актуальный перечень ООН (RU) не найден или неактивен !!!");
+                    }
 
-                // Скачивание русской версии Перечня ООН
-                Log.Debug("/// Запрос актуального каталога ООН (RU) ///");
-                var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
-                if (unRusCatalog != null && unRusCatalog.IsActive)
-                {
-                    string path = Path.Combine(downloadFolder, "current_un_rus.xml");
-                    Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
-                    await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
-                    Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
+                    // Скачивание английской версии Перечня ООН
+                    Log.Debug("/// Запрос актуального каталога ООН (EN) ///");
+                    var unEnCatalog = await catalogService.GetUnCatalogAsync();
+                    if (unEnCatalog != null && unEnCatalog.IsActive)
+                    {
+                        string path = Path.Combine(downloadFolder, "current_un.xml");
+                        Log.Information("Найден активный перечень ООН (EN) от {Date}. Скачивание файла...", unEnCatalog.Date);
+                        await catalogService.DownloadUnFileAsync(unEnCatalog.IdXml, path);
+                        Log.Information("Файл ООН (EN) успешно сохранен: {Path}", path);
+                    }
+                    else
+                    {
+                        Log.Warning("!!! Актуальный перечень ООН (EN) не найден или неактивен !!!");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Log.Warning("!!! Актуальный перечень ООН (RU) не найден или неактивен !!!");
+                    Log.Error(ex, "Не удалось скачать перечень ООН");
                 }
-
-                // Скачивание английской версии Перечня ООН
-                Log.Debug("/// Запрос актуального каталога ООН (EN) ///");
-                var unEnCatalog = await catalogService.GetUnCatalogAsync();
-                if (unEnCatalog != null && unEnCatalog.IsActive)
-                {
-                    string path = Path.Combine(downloadFolder, "current_un.xml");
-                    Log.Information("Найден активный перечень ООН (EN) от {Date}. Скачивание файла...", unEnCatalog.Date);
-                    await catalogService.DownloadUnFileAsync(unEnCatalog.IdXml, path);
-                    Log.Information("Файл ООН (EN) успешно сохранен: {Path}", path);
-                }
-                else
-                {
-                    Log.Warning("!!! Актуальный перечень ООН (EN) не найден или неактивен !!!");
-                }
-
                 Log.Information("Все запланированные операции успешно завершены.");
             }
             catch (Exception ex)
