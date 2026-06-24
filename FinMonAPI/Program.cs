@@ -147,8 +147,6 @@ namespace FinMonAPI
                 Log.Information("Приложение завершает свою работу.");
                 Log.CloseAndFlush(); // Принудительно сбрасываем буфер логов в файл на диске
             }
-            Console.WriteLine("\nНажмите любую клавишу для выхода...");
-            Console.ReadKey();
         }
     }
 }
