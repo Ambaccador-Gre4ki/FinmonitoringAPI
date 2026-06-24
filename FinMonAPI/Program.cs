@@ -94,7 +94,9 @@ namespace FinMonAPI
                 var te2Catalog = await catalogService.GetTe2CatalogAsync();
                 if (te2Catalog != null && te2Catalog.IsActive)
                 {
-                    string path = Path.Combine(downloadFolder, "current_te2.zip");
+                    string stamp = te2Catalog.Date.ToString("yyyy-MM-dd");
+                    string fileName = $"current_te2_{stamp}.zip";
+                    string path = Path.Combine(downloadFolder, fileName);                    
                     Log.Information("Найден активный перечень ТЭ от {Date}. Скачивание файла...", te2Catalog.Date);
                     await catalogService.DownloadTe2FileAsync(te2Catalog.IdXml, path);
                     Log.Information("Файл ТЭ успешно сохранен: {Path}", path);
@@ -103,6 +105,23 @@ namespace FinMonAPI
                 {
                     Log.Warning("!!! Актуальный перечень ТЭ не найден или неактивен !!!");
                 }
+
+                Log.Debug("/// Запрос актуального перечня МВК");
+                var mvkCatalog = await catalogService.GetMVKCatalogAsync();
+                if (mvkCatalog != null && mvkCatalog.IsActive == true)
+                {
+                    string stamp_mvk = mvkCatalog.Date.ToString("yyyy-MM-dd");
+                    string fileNameMVK = $"current_mvk_{stamp_mvk}.zip";
+                    string path = Path.Combine(downloadFolder, fileNameMVK);
+                    Log.Information("Найден активный перечень МВК от {Date}. Скачивание файла...", mvkCatalog.Date);
+                    await catalogService.DownloadMVKFileAsync(mvkCatalog.IdXml, path);
+                    Log.Information("Файл МВК успешно сохранён: {Path}", path);
+                }
+                else
+                {
+                    Log.Warning("!!! Перечень МВК не найден !!!");
+                }
+
                 Log.Information("Все запланированные операции успешно завершены.");
             }
             catch (Exception ex)

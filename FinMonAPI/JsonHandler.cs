@@ -24,8 +24,8 @@ namespace FinMonAPI
             if (urlPath.Contains("authenticate")) methodName = "1_auth";
             else if (urlPath.Contains("current-te2-catalog")) methodName = "2_te2_catalog";
             else if (urlPath.Contains("current-te2-file")) methodName = "3_te2_file";
-            else if (urlPath.Contains("current-un-catalog-rus")) methodName = "4_un_catalog_rus";
-            else if (urlPath.Contains("current-un-file")) methodName = "5_un_file";
+            else if (urlPath.Contains("current-mvk-catalog")) methodName = "4_mvk_catalog";
+            else if (urlPath.Contains("current-mvk-file")) methodName = "5_mvk_file";
 
             // 1 Сохранение запроса
             string requestFileName = $"{methodName}_request.json";
