@@ -69,6 +69,26 @@ namespace FinMonAPI
             await SaveStreamToFileAsync(response, destinationPath);
         }
 
+        /// <summary>
+        /// Получение информации о каталоге МВК
+        /// </summary>
+        public async Task<MVKCatalogResponse?> GetMVKCatalogAsync()
+        {
+            var response = await _httpClient.PostAsync("suspect-catalogs/current-mvk-catalog", null);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<MVKCatalogResponse>(_jsonOptions);
+        }
+
+        /// <summary>
+        /// Скачивание zip-файла перечня МВК
+        /// </summary>
+        public async Task DownloadMVKFileAsync(Guid catalogId, string destinationPath)
+        {
+            var formData = new FormUrlEncodedContent(new Dictionary<string, string> { { "id", catalogId.ToString() } });
+            var response = await _httpClient.PostAsync("suspect-catalogs/current-mvk-file-zip", formData);
+            response.EnsureSuccessStatusCode();
+            await SaveStreamToFileAsync(response, destinationPath);
+        }
         private static async Task SaveStreamToFileAsync(HttpResponseMessage response, string destinationPath)
         {
             using var responseStream = await response.Content.ReadAsStreamAsync();

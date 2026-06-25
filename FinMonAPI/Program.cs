@@ -86,10 +86,12 @@ namespace FinMonAPI
                 var te21Catalog = await catalogService.GetTe21CatalogAsync();
                 if (te21Catalog != null && te21Catalog.IsActive)
                 {
-                    string path = Path.Combine(downloadFolder, "current_te21.zip");
+                    string stamp_te21 = te21Catalog.Date.ToString("yyyy-MM-dd");
+                    string fileNameTe21 = $"current_te21_{stamp_te21}.zip";
+                    string path_te21 = Path.Combine(downloadFolder, fileNameTe21);
                     Log.Information("Найден активный перечень ТЭ от {Date}. Скачивание файла...", te21Catalog.Date);
-                    await catalogService.DownloadTe21FileAsync(te21Catalog.IdXml, path);
-                    Log.Information("Файл ТЭ успешно сохранен: {Path}", path);
+                    await catalogService.DownloadTe21FileAsync(te21Catalog.IdXml, path_te21);
+                    Log.Information("Файл ТЭ успешно сохранен: {Path}", path_te21);
                 }
                 else
                 {
@@ -102,10 +104,12 @@ namespace FinMonAPI
                     var unRusCatalog = await catalogService.GetUnCatalogRusAsync();
                     if (unRusCatalog != null && unRusCatalog.IsActive)
                     {
-                        string path = Path.Combine(downloadFolder, "current_un_rus.xml");
+                        string stamp_unRus = unRusCatalog.Date.ToString("yyyy-MM-dd");
+                        string fileNameUnRus = $"current_te21_{stamp_unRus}.zip";
+                        string path_unRus = Path.Combine(downloadFolder, fileNameUnRus);
                         Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
-                        await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path);
-                        Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path);
+                        await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path_unRus);
+                        Log.Information("Файл ООН (RU) успешно сохранен: {Path}", path_unRus);
                     }
                     else
                     {
@@ -117,10 +121,12 @@ namespace FinMonAPI
                     var unEnCatalog = await catalogService.GetUnCatalogAsync();
                     if (unEnCatalog != null && unEnCatalog.IsActive)
                     {
-                        string path = Path.Combine(downloadFolder, "current_un.xml");
+                        string stamp_unEn = unEnCatalog.Date.ToString("yyyy-MM-dd");
+                        string fileNameUnEn = $"current_te21_{stamp_unEn}.zip";
+                        string path_unEn = Path.Combine(downloadFolder, fileNameUnEn);
                         Log.Information("Найден активный перечень ООН (EN) от {Date}. Скачивание файла...", unEnCatalog.Date);
-                        await catalogService.DownloadUnFileAsync(unEnCatalog.IdXml, path);
-                        Log.Information("Файл ООН (EN) успешно сохранен: {Path}", path);
+                        await catalogService.DownloadUnFileAsync(unEnCatalog.IdXml, path_unEn);
+                        Log.Information("Файл ООН (EN) успешно сохранен: {Path}", path_unEn);
                     }
                     else
                     {
@@ -130,6 +136,21 @@ namespace FinMonAPI
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Не удалось скачать перечень ООН");
+                }
+                Log.Debug("/// Запрос актуального перечня МВК");
+                var mvkCatalog = await catalogService.GetMVKCatalogAsync();
+                if (mvkCatalog != null && mvkCatalog.IsActive == true)
+                {
+                    string stamp_mvk = mvkCatalog.Date.ToString("yyyy-MM-dd");
+                    string fileNameMVK = $"current_mvk_{stamp_mvk}.zip";
+                    string path_mvk = Path.Combine(downloadFolder, fileNameMVK);
+                    Log.Information("Найден активный перечень МВК от {Date}. Скачивание файла...", mvkCatalog.Date);
+                    await catalogService.DownloadMVKFileAsync(mvkCatalog.IdXml, path_mvk);
+                    Log.Information("Файл МВК успешно сохранён: {Path}", path_mvk);
+                }
+                else
+                {
+                    Log.Warning("!!! Перечень МВК не найден !!!");
                 }
                 Log.Information("Все запланированные операции успешно завершены.");
             }
