@@ -105,7 +105,7 @@ namespace FinMonAPI
                     if (unRusCatalog != null && unRusCatalog.IsActive)
                     {
                         string stamp_unRus = unRusCatalog.Date.ToString("yyyy-MM-dd");
-                        string fileNameUnRus = $"current_te21_{stamp_unRus}.zip";
+                        string fileNameUnRus = $"current_UnRUS_{stamp_unRus}.xml";
                         string path_unRus = Path.Combine(downloadFolder, fileNameUnRus);
                         Log.Information("Найден активный перечень ООН (RU) от {Date}. Скачивание файла...", unRusCatalog.Date);
                         await catalogService.DownloadUnFileAsync(unRusCatalog.IdXml, path_unRus);
@@ -122,7 +122,7 @@ namespace FinMonAPI
                     if (unEnCatalog != null && unEnCatalog.IsActive)
                     {
                         string stamp_unEn = unEnCatalog.Date.ToString("yyyy-MM-dd");
-                        string fileNameUnEn = $"current_te21_{stamp_unEn}.zip";
+                        string fileNameUnEn = $"current_UnENG_{stamp_unEn}.xml";
                         string path_unEn = Path.Combine(downloadFolder, fileNameUnEn);
                         Log.Information("Найден активный перечень ООН (EN) от {Date}. Скачивание файла...", unEnCatalog.Date);
                         await catalogService.DownloadUnFileAsync(unEnCatalog.IdXml, path_unEn);
